@@ -1,57 +1,67 @@
 #include "data_structures.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-int construct_vec_i(vector_int *vec, int size){
-    if(vec < 0){
+vector_int construct_vec_i(int size){
+    vector_int vec;
+    if(size < 0){
         printf("\n\nERRO: TAMANHO NEGATIVO EM VETOR\n\n");
-        return 1;
+        vec.elem = NULL;
+        vec._private_end_ptr = NULL;
+        vec._private_mem_end_ptr = NULL;
+        return vec;
     }
 
-    vec->size = size;
-    vec->capacity = size;
-    vec->elem = (int *)malloc(size * sizeof(int));
-    vec->end_ptr = vec->elem + vec->size;
-    vec->mem_end_ptr = vec->elem + vec->capacity;
+    vec.elem = (int *)malloc(size * sizeof(int));
+    vec._private_end_ptr = vec.elem + size;
+    vec._private_mem_end_ptr = vec.elem + size;
 
-    if(vec->elem == NULL){
+    if(vec.elem == NULL){
         printf("\n\nERRO: ALOCACAO DE MEMORIA FALHOU\n\n");
-        return 1;
+        vec.elem = NULL;
+        vec._private_end_ptr = NULL;
+        vec._private_mem_end_ptr = NULL;
+        return vec;
     }
-    return 0;
+    return vec;
 }
 
 void init_vec_i(vector_int *vec, int val){
-    for(int i = 0; i < vec->size; ++i){
+    for(int i = 0; i < vec->_private_end_ptr - vec->elem; ++i){
         vec->elem[i] = val;
     }
+}
+
+int size_vec_i(vector_int *vec){
+    return (int)((vec->_private_end_ptr - 1) - vec->elem);
+}
+
+int capacity_vec_i(vector_int *vec){
+    return (int)((vec->_private_mem_end_ptr - 1) - vec->elem);
 }
 
 void destroy_vec_i(vector_int *vec){
     free(vec->elem);
     vec->elem = NULL;
-    vec->end_ptr = NULL;
-    vec->mem_end_ptr = NULL;
+    vec->_private_end_ptr = NULL;
+    vec->_private_mem_end_ptr = NULL;
 }
 
-bool is_empty_i(vector_int *vec){
-    return vec->size == 0 ? true:false;
+bool is_empty_vec_i(vector_int *vec){
+    return vec->elem == vec->_private_end_ptr ? true:false;
 }
 
-void resize_i(vector_int *vec, int val){
-    vec->size = val;
-    vec->end_ptr = vec->elem + val;
-    vec->mem_end_ptr = vec->elem + vec->capacity;
+void resize_vec_i(vector_int *vec, int val){
+    vec->_private_end_ptr = vec->elem + (val+1);
 }
 
-int push_back_i(int val, vector_int *vec){
-    if(vec->size == 0){
-        vec->size = 1;
-        vec->capacity = 1;
+int push_back_vec_i(int val, vector_int *vec){
+    if(vec->_private_end_ptr - vec->elem == 0){
         vec->elem = (int *)malloc(sizeof(int));
-        vec->end_ptr = vec->elem+vec->size;
-        vec->mem_end_ptr = vec->elem+vec->capacity;
+        vec->_private_end_ptr = vec->elem + 1;
+        vec->_private_mem_end_ptr = vec->elem + 1;
 
         if(vec->elem == NULL){
             printf("\n\nERRO: ALOCACAO DE MEMORIA FALHOU\n\n");
@@ -59,50 +69,47 @@ int push_back_i(int val, vector_int *vec){
         }
 
         vec->elem[0] = val;
-    }else if(vec->end_ptr >= vec->mem_end_ptr){
-        ++vec->size;
-        vec->capacity *= 2;
-        vec->elem = realloc(vec->elem, vec->capacity*sizeof(int));
+    }else if(vec->_private_end_ptr >= vec->_private_mem_end_ptr){
+        ++vec->_private_end_ptr;
+        vec->_private_mem_end_ptr= vec->elem + 2 * (vec->_private_end_ptr - vec->elem);
+        vec->elem = realloc(vec->elem, (vec->_private_mem_end_ptr - vec->elem) * sizeof(int));
 
         if(vec->elem == NULL){
             printf("\n\nERRO: ALOCACAO DE MEMORIA FALHOU\n\n");
             return 1;
         }
-
-        vec->end_ptr = vec->elem + vec->size;
-        vec->mem_end_ptr = vec->elem + vec->capacity;
-        
-        *(vec->end_ptr-1) = val;
-        ++vec->end_ptr;
+ 
+        *(vec->_private_end_ptr-1) = val;
+        ++vec->_private_end_ptr;
     }else{
-        vec->size += 1;
-        *(vec->end_ptr-1) = val;
-        ++vec->end_ptr;
+        *(vec->_private_end_ptr-1) = val;
+        ++vec->_private_end_ptr;
     }
 
     return 0;
 }
 
-void pop_back_i(vector_int *vec){
-    --vec->size;
-    --vec->end_ptr;
+void pop_back_vec_i(vector_int *vec){
+    --vec->_private_end_ptr;
 }
 
-int shrink_to_fit_i(vector_int *vec){
-    vec->capacity = vec->size;
-    vec->elem = realloc(vec->elem, vec->size*sizeof(int));
+int shrink_to_fit_vec_i(vector_int *vec){
+    int new_size = (int)(vec->_private_end_ptr - vec->elem); 
+    vec->elem = realloc(vec->elem, new_size * sizeof(int));
     if(vec->elem == NULL){
         printf("\n\nERRO: ALOCACAO DE MEMORIA FALHOU\n\n");
         return 1;
     }
 
-    vec->end_ptr = vec->elem + vec->size;
-    vec->mem_end_ptr = vec->end_ptr;
+    vec->_private_end_ptr = vec->elem + new_size;
+    vec->_private_mem_end_ptr = vec->_private_end_ptr;
     return 0;
 }
 
-int erase_vec_i(vector_int *vec, int* element){    
-    int *tmp = (int *)malloc(vec->capacity * sizeof(int));
+int erase_vec_i(vector_int *vec, int* element){
+    int size = (int)(vec->_private_end_ptr - vec->elem);
+    int capacity = (int)(vec->_private_mem_end_ptr - vec->elem);    
+    int *tmp = (int *)malloc( capacity * sizeof(int));
     if(tmp == NULL){
         printf("\n\nERRO: ALOCACAO DE MEMORIA FALHOU\n\n");
         return 1;
@@ -114,15 +121,13 @@ int erase_vec_i(vector_int *vec, int* element){
         tmp[i] = vec->elem[i];
     }
 
-    for(int i = left+1; i < vec->size; ++i){
+    for(int i = left+1; i < size; ++i){
         tmp[i - 1] = vec->elem[i];  
     }
 
     free(vec->elem);
     vec->elem = tmp;
-    vec->size -= 1;
-    vec->end_ptr = vec->elem + vec->size;
-    vec->mem_end_ptr = vec->elem + vec->capacity;
-
+    vec->_private_end_ptr = vec->elem + size-1;
+    vec->_private_mem_end_ptr = vec->elem + capacity;
     return 0;
 }
