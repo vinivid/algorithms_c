@@ -1,6 +1,7 @@
 #include "actors.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 
 void swap(int *a, int *b){
     int tmp = *a;
@@ -46,4 +47,30 @@ bool bin_search_bool(int *A, int size, int find){
     }
 
     return false;
+}
+
+tuple_3i find_max_subarr(int *A, int size){
+    tuple_3i tmp;
+    tmp.sum = A[0];
+    tmp.left = 0;
+    tmp.right = 0;
+    int current_left = 0;
+    int curr_sum = A[0];
+
+    for(int i = 1; i < size; ++i){
+        curr_sum += A[i];
+
+        if(curr_sum > tmp.sum){
+            tmp.left = current_left;
+            tmp.sum = curr_sum;
+            tmp.right = i;
+        }
+
+        if(curr_sum < 0){
+            current_left = i + 1;
+            curr_sum = 0;
+        }
+    }
+
+    return tmp;
 }
