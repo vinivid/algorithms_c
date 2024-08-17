@@ -187,7 +187,7 @@ int get_top_stack_i(stack_int *stck) {
         return -451;
     }
 
-    return *--stck->end;
+    return *(stck->end - 1);
 }
 
 int set_top_stack_i(int val, stack_int *stck) {
@@ -196,12 +196,12 @@ int set_top_stack_i(int val, stack_int *stck) {
         return 1;
     }
 
-    *--stck->end = val;
+    *(stck->end - 1) = val;
     return 0;
 }
 
 int push_back_stack_i(int val, stack_int *stck) {
-    if(stck->start == stck->end) {
+    if(stck->end - stck->start == 0) {
         stck->start = (int *)malloc(sizeof(int));
 
         if (stck->start == NULL) {
@@ -226,7 +226,7 @@ int push_back_stack_i(int val, stack_int *stck) {
         }
 
         stck->end = stck->start + size;
-        stck->end = stck->start + capacity;
+        stck->capacity = stck->start + capacity;
 
         *stck->end = val;
         ++stck->end;
@@ -243,7 +243,7 @@ int push_back_stack_i(int val, stack_int *stck) {
 int pop_back_stack_i(stack_int *stck) {
     if(stck->end - stck->start) {
         --stck->end;
-        return *(stck->end + 1);
+        return *stck->end;
     }else {
         printf("ERRO:: NAO HA ELEMENTOS PARA REMOVER");
         return -451;
@@ -252,6 +252,10 @@ int pop_back_stack_i(stack_int *stck) {
 
 int size_stack_i(stack_int *stck){
     return (int)(stck->end - stck->start);
+}
+
+int capacity_stack_i(stack_int *stck){
+    return (int)(stck->capacity - stck->start);
 }
 
 bool is_empty_stack_i(stack_int *stck){

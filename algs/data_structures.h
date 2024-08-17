@@ -64,5 +64,8 @@ int pop_back_stack_i (stack_int *stck);
 //Retorna o tamanho da stack
 int size_stack_i(stack_int *stck);
 
+//Retorna a capacidade reservada para a stack
+int capacity_stack_i(stack_int *stck);
+
 //Checa se a stack esta vazia
 bool is_empty_stack_i (stack_int *stck);

@@ -1,7 +1,6 @@
 #include "actors.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#include <math.h>
 
 void swap(int *a, int *b){
     int tmp = *a;
