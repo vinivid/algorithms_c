@@ -69,3 +69,42 @@ int capacity_stack_i(stack_int *stck);
 
 //Checa se a stack esta vazia
 bool is_empty_stack_i (stack_int *stck);
+
+/*
+    Queue também conhecida como fila, é uma estrutura de dados que tem o 
+mesmo comportamento de uma "fila" que é o, primeiro a entrar primeiro a 
+sair chamado de FIFO (First in first out).
+
+*/
+
+typedef struct data_structure_queue_int queue_int;
+
+//Construtor padrão da queue
+queue_int* construct_queue_i();
+
+//Destrutor padrão da queue
+void destroy_queue_i(queue_int* que);
+
+//Retorna o valor da frete da fila
+int front_queue_i(queue_int* que);
+
+//Retorna o valor da ultima posição da fila
+int back_queue_i(queue_int* que);
+
+//Coloaca um valor no fim da fila
+int push_queue_i(int val, queue_int* que);
+
+//Remove um valor da frente da fila
+int pop_queue_i(queue_int* que);
+
+//Retorna o tamanho da fila
+int size_queue_i(queue_int* que);
+
+//Retorna a capacidade reservada para a fila
+int capacity_queue_i(queue_int* que);
+
+//Realoca a fila para o tamanho total que seus objetos ocupam
+int shrink_to_fit_queue_i(queue_int* que);
+
+//Retorna true se a fila estiver vazia
+bool is_empty_queue(queue_int* que);

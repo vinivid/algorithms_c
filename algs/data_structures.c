@@ -179,6 +179,7 @@ void destroy_stack_i(stack_int *stck) {
     if(stck->start == NULL) return;
 
     free(stck->start);
+    free(stck);
 }
 
 int get_top_stack_i(stack_int *stck) {
@@ -260,4 +261,46 @@ int capacity_stack_i(stack_int *stck){
 
 bool is_empty_stack_i(stack_int *stck){
     return stck->start == stck->end ? true:false;
+}
+
+
+/*
+/////////////////////////////////////////////////////
+                    Queue
+/////////////////////////////////////////////////////
+*/
+
+struct data_structure_queue_int {
+    int start_q;
+    int end_q;
+
+    int* start;
+    int* capacity;
+};
+
+queue_int* construct_queue_i() {
+    queue_int* tmp = (queue_int *)malloc(sizeof(queue_int));
+
+    if(tmp == NULL) {
+        printf("\n\nERRO:: ALOCACAO DE MEMORIA FALHOU");
+        return NULL;
+    }
+
+    tmp->start = (int *)malloc(sizeof(int));
+
+    if(tmp->start == NULL) {
+        printf("\n\nERRO:: ALOCACAO DE MEMORIA FALHOU");
+        return NULL;
+    }
+
+    tmp->capacity = tmp->start + 1;
+    tmp->end_q = 0;
+    tmp->start_q = 0;
+
+    return tmp;
+}
+
+void destroy_queue_i(queue_int *que) {
+    free(que->start);
+    free(que);
 }
