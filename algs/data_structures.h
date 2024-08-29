@@ -107,4 +107,4 @@ int capacity_queue_i(queue_int* que);
 int shrink_to_fit_queue_i(queue_int* que);
 
 //Retorna true se a fila estiver vazia
-bool is_empty_queue(queue_int* que);
+bool is_empty_queue_i(queue_int* que);

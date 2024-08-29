@@ -276,7 +276,6 @@ struct data_structure_queue_int {
     int curr_end;
 
     int* start;
-    int* end;
     int* capacity;
 };
 
@@ -284,7 +283,6 @@ queue_int* construct_queue_i() {
     queue_int* tmp = (queue_int *)malloc(sizeof(queue_int));
 
     tmp->start = NULL;
-    tmp->end = NULL;
     tmp->capacity = NULL;
 
     return tmp;
@@ -300,11 +298,11 @@ int front_queue_i(queue_int *que) {
 }
 
 int back_queue_i(queue_int *que) {
-    return *(que->end - 1);
+    return que->start[que->curr_end];
 }
 
 int push_queue_i(int val, queue_int *que) {
-    if(que->end - que->start == 0) {
+    if(&que->start[que->curr_front] - que->start == 0) {
         que->start = (int *)malloc(sizeof(int));
 
         if(que->start == NULL) {
@@ -312,8 +310,7 @@ int push_queue_i(int val, queue_int *que) {
             return 1;
         }
 
-        que->end = que->start + 1;
-        que->capacity = que->end;
+        que->capacity = que->start + 1;
         que->curr_front = 0;
 
         que->start[0] = val;
@@ -345,13 +342,11 @@ int push_queue_i(int val, queue_int *que) {
 
         free(que->start);
         que->start = tmp;
-        que->end = que->start + sz;
         que->capacity = que->start + n_capacity;
 
-        *que->end = val;
-        ++que->end;
         que->curr_front = 0;
         que->curr_end = sz;
+        que->start[que->curr_end] = val;
 
         return 0;
     }else{
@@ -368,5 +363,61 @@ int push_queue_i(int val, queue_int *que) {
 }
 
 int pop_queue_i(queue_int *que) {
-    if(que->curr_front );
+    if (&que->start[que->curr_front + 1] == que->capacity ) {
+        int tmp = que->start[que->curr_front];
+        que->curr_front = 0;
+        return tmp;
+    } else {
+        int tmp = que->start[que->curr_front];
+        ++que->curr_front;
+        return tmp;
+    }
+}
+
+int size_queue_i(queue_int *que) {
+    if (que->curr_end <= que->curr_front) {
+        int part1 = (int)(&que->start[que->curr_end] - que->start);
+        int part2 = (int)(que->capacity - &que->start[que->curr_front]);
+        return part1 + part2;
+    }else{
+        return (int)(que->start[que->curr_end] - que->start[que->curr_front]);
+    }
+}
+
+int shrink_to_fit_queue_i(queue_int *que) {
+        int sz = size_queue_i(que);
+
+        int *tmp = (int *)malloc(sz * sizeof(int));
+        int tmp_pos = 0;
+
+
+        if (tmp == NULL) {
+            printf("\n\nERRO: ALOCACO DE MEMORIA FALHOU\n\n");
+            return 1;
+        }
+
+
+        for(int i = que->curr_front; i < sz; ++i) {
+            tmp[tmp_pos] = que->start[i];
+            ++tmp_pos; 
+        }
+
+        int left_part = (int)(&que->start[que->curr_end] - que->start);
+        for (int i = 0; i < left_part; ++i){
+            tmp[tmp_pos] = que->start[i];
+            ++tmp_pos;
+        }
+
+        free(que->start);
+        que->start = tmp;
+        que->capacity = que->start + sz;
+
+        que->curr_front = 0;
+        que->curr_end = sz;
+
+        return 0;
+}
+
+bool is_empty_queue_i(queue_int *que) {
+    return size_queue_i(que) ? false:true;
 }
