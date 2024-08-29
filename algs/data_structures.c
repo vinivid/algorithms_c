@@ -273,6 +273,8 @@ bool is_empty_stack_i(stack_int *stck){
 struct data_structure_queue_int {
     //O current front representa o index da front no momento
     int curr_front;
+    int curr_end;
+
     int* start;
     int* end;
     int* capacity;
@@ -316,14 +318,55 @@ int push_queue_i(int val, queue_int *que) {
 
         que->start[0] = val;
         return 0;
-    }else if(que->end >= que->capacity && que->curr_front != 0) {
-        //Se a fila chegar ao limite da sua capacidade mas ela não estiver 
-        //completamente preechida é melhor simplesmente recopiar no espaço
-        //que esta sobrando 
+    }else if(&que->start[que->curr_end + 1] == &que->start[que->curr_front]){
+        int sz = (int)(que->capacity - que->start);
+        int n_capacity = sz * 2;
 
-    }else if(que->end >= que->capacity) {
+        int *tmp = (int *)malloc(n_capacity * sizeof(int));
+        int tmp_pos = 0;
 
+
+        if (tmp == NULL) {
+            printf("\n\nERRO: ALOCACO DE MEMORIA FALHOU\n\n");
+            return 1;
+        }
+
+
+        for(int i = que->curr_front; i < sz; ++i) {
+            tmp[tmp_pos] = que->start[i];
+            ++tmp_pos; 
+        }
+
+        int left_part = (int)(&que->start[que->curr_end] - que->start);
+        for (int i = 0; i < left_part; ++i){
+            tmp[tmp_pos] = que->start[i];
+            ++tmp_pos;
+        }
+
+        free(que->start);
+        que->start = tmp;
+        que->end = que->start + sz;
+        que->capacity = que->start + n_capacity;
+
+        *que->end = val;
+        ++que->end;
+        que->curr_front = 0;
+        que->curr_end = sz;
+
+        return 0;
     }else{
-
+        if(&que->start[que->curr_end + 1] == que->capacity) {
+            que->start[0] = val;
+            que->curr_end = 0;
+            return 0;
+        }else{
+            ++que->curr_end;
+            que->start[que->curr_end] = val;
+            return 0;
+        }
     }
+}
+
+int pop_queue_i(queue_int *que) {
+    if(que->curr_front );
 }

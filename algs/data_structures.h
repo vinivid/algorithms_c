@@ -53,7 +53,7 @@ void destroy_stack_i(stack_int *stck);
 int get_top_stack_i(stack_int *stck);
 
 //modifica o valor do topo da stack
-int set_top_stack_i(int val, stack_int* stck);
+int set_top_stack_i(int val, stack_int *stck);
 
 //Retorna 0 se foi efetuado com sucesso e 1 caso teve algum erro
 int push_back_stack_i (int val, stack_int *stck);
@@ -94,7 +94,7 @@ int back_queue_i(queue_int* que);
 //Coloaca um valor no fim da fila
 int push_queue_i(int val, queue_int* que);
 
-//Remove um valor da frente da fila
+//Remove um valor da frente da
 int pop_queue_i(queue_int* que);
 
 //Retorna o tamanho da fila
